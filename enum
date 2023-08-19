@@ -1,0 +1,110 @@
+struct Employee {
+    employee_id: u32,
+    employee_name: String,
+    email: String,
+    age: u32,
+    phone_number: String,
+}
+
+impl Employee {
+    fn new(
+        employee_id: u32,
+        employee_name: String,
+        email: String,
+        age: u32,
+        phone_number: String,
+    ) -> Self {
+        Employee {
+            employee_id,
+            employee_name,
+            email,
+            age,
+            phone_number,
+        }
+    }
+}
+
+fn find_employee_by_id(employees: &[Employee], target_id: u32) -> Option<&Employee> {
+    employees.iter().find(|employee| employee.employee_id == target_id)
+}
+
+fn find_employees_by_age(employees: &[Employee], target_age: u32) -> Vec<&Employee> {
+    employees
+        .iter()
+        .filter(|employee| employee.age == target_age)
+        .collect()
+}
+
+fn main() {
+    let mut employees: Vec<Employee> = Vec::new();
+
+    loop {
+        println!("Enter employee details (or type 'quit' to exit):");
+
+        println!("Employee Name:");
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).expect("Failed to read input");
+        let employee_name = input.trim().to_string();
+
+        if employee_name == "quit" {
+            break;
+        }
+
+        println!("Employee ID:");
+        input.clear();
+        std::io::stdin().read_line(&mut input).expect("Failed to read input");
+        let employee_id = input.trim().parse::<u32>().expect("Invalid input");
+
+        println!("Email:");
+        input.clear();
+        std::io::stdin().read_line(&mut input).expect("Failed to read input");
+        let email = input.trim().to_string();
+
+        println!("Age:");
+        input.clear();
+        std::io::stdin().read_line(&mut input).expect("Failed to read input");
+        let age = input.trim().parse::<u32>().expect("Invalid input");
+
+        println!("Phone Number:");
+        input.clear();
+        std::io::stdin().read_line(&mut input).expect("Failed to read input");
+        let phone_number = input.trim().to_string();
+
+        let employee = Employee::new(employee_id, employee_name, email, age, phone_number);
+        employees.push(employee);
+    }
+
+    println!("Enter an employee ID to find:");
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).expect("Failed to read input");
+    let target_id = input.trim().parse::<u32>().expect("Invalid input");
+
+    match find_employee_by_id(&employees, target_id) {
+        Some(employee) => println!(
+            "Employee found: ID={}, Name={}, Age={}",
+            employee.employee_id, employee.employee_name, employee.age
+        ),
+        None => println!("Employee not found"),
+    }
+
+    println!("Enter an age to find employees with the same age:");
+    input.clear();
+    std::io::stdin().read_line(&mut input).expect("Failed to read input");
+    let target_age = input.trim().parse::<u32>().expect("Invalid input");
+
+    let employees_with_same_age = find_employees_by_age(&employees, target_age);
+    if !employees_with_same_age.is_empty() {
+        println!("Employees with age {}:", target_age);
+        for employee in employees_with_same_age {
+            println!(
+                "ID={}, Name={}, Email={}, Phone={}",
+                employee.employee_id,
+                employee.employee_name,
+                employee.email,
+                employee.phone_number
+            );
+        }
+    } else {
+        println!("No employees with age {} found", target_age);
+    }
+}
